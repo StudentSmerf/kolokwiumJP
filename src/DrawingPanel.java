@@ -1,23 +1,22 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 
 
 public class DrawingPanel extends JPanel {
     private ArrayList<Rectangle> rectangles;
+    private ArrayList<DrawingController> workers;
     private Rectangle currentRectangle;
+    private MenuPanel menuPanel;
 
     private int prevX, prevY;
-    public DrawingPanel() {
-
+    public DrawingPanel(MenuPanel menu) {
+        menuPanel = menu;
+        workers = new ArrayList<>();
         currentRectangle = new Rectangle();
         rectangles = new ArrayList<>();
         setBackground(Color.white);
-
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
@@ -32,7 +31,9 @@ public class DrawingPanel extends JPanel {
                     int height = prevY - e.getY();
                     currentRectangle.setBounds(e.getX(), e.getY(), width, height);
                     repaint();
-                    rectangles.add(currentRectangle);
+                    DrawingController controller = new DrawingController( currentRectangle, menuPanel);
+                    workers.add(controller);
+                    //rectangles.add(currentRectangle);
                     currentRectangle = null;
                 }
 
@@ -43,43 +44,33 @@ public class DrawingPanel extends JPanel {
         });
 
     }
+    void startTimer(){
+        ActionListener simulationClock = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (DrawingController worker : workers) {
+                    worker.execute();
+                }
+            }
+        };
 
-
-    int deltaY = 0, deltaX = 0;
-    public void moveRectangle(MenuPanel.option option) {
-
-        switch (option){
-            case dol -> {
-                deltaY = -5;
-                deltaX = 0;
-            }
-            case gora -> {
-                deltaY = +5;
-                deltaX = 0;
-            }
-            case lewo -> {
-                deltaX = -5;
-                deltaY = 0;
-            }
-            case prawo -> {
-                deltaX = 5;
-                deltaY = 0;
-            }
-        }
-        if(rectangles != null){
-            for (Rectangle rectangle : rectangles) {
-                rectangle.setBounds(rectangle.x + deltaX, rectangle.y + deltaY, rectangle.width, rectangle.height);
-            }
-        }
-        repaint();
+        Timer simulationTimer = new Timer(1000, simulationClock);
+        simulationTimer.setRepeats(true);
+        simulationTimer.start();
     }
+
+
+
+
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(rectangles != null){
-            for (Rectangle rectangle : rectangles) {
-                g.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            for (DrawingController worker : workers) {
+                //Nie zwraca rectangle i nie mam czasu
+                //Rectangle rectangle = worker.execute();
+                //g.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             }
         }
 

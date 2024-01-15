@@ -9,10 +9,10 @@ class DrawingApp extends JFrame{
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         MenuPanel menuPanel = new MenuPanel();
-        DrawingPanel drawingPanel = new DrawingPanel();
+        DrawingPanel drawingPanel = new DrawingPanel(menuPanel);
         drawingPanel.setFocusable(true);
 
-        DrawingController controller = new DrawingController(drawingPanel);
+
 
         setLayout(new BorderLayout());
         add(menuPanel, BorderLayout.NORTH);
