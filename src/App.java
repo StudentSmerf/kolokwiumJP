@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 
 class DrawingApp extends JFrame{
@@ -10,6 +12,7 @@ class DrawingApp extends JFrame{
 
         MenuPanel menuPanel = new MenuPanel();
         DrawingPanel drawingPanel = new DrawingPanel(menuPanel);
+        drawingPanel.startTimer();
         drawingPanel.setFocusable(true);
 
 
@@ -17,6 +20,14 @@ class DrawingApp extends JFrame{
         setLayout(new BorderLayout());
         add(menuPanel, BorderLayout.NORTH);
         add(drawingPanel, BorderLayout.CENTER);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                menuPanel.setWindowSize(e.getComponent().getSize());
+                System.out.println("Resized to " + e.getComponent().getSize());
+            }
+        });
 
 
         setVisible(true);
@@ -36,9 +47,6 @@ public class App {
         });
     }
 }
-
-
-//MenuPanel.currentOption == MenuPanel.option.drawRect
 
 
 

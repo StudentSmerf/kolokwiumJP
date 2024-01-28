@@ -1,4 +1,5 @@
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -6,6 +7,7 @@ public class MenuPanel extends JPanel{
     public enum option{
         dol, gora, lewo, prawo;
     }
+    public Dimension windowSize;
     public static option currentOption;
     public MenuPanel(){
         JButton dolButton = new JButton("Dół");
@@ -17,6 +19,8 @@ public class MenuPanel extends JPanel{
         add(goraButton);
         add(lewoButton);
         add(prawoButton);
+
+        currentOption = option.dol;
 
         dolButton.addActionListener(new ActionListener() {
             @Override
@@ -49,4 +53,11 @@ public class MenuPanel extends JPanel{
 
     }
 
+    public Dimension getWindowSize() {
+        return windowSize;
+    }
+
+    public void setWindowSize(Dimension windowSize) {
+        this.windowSize = windowSize;
+    }
 }

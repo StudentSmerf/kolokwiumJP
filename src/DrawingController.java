@@ -20,22 +20,32 @@ public class DrawingController extends SwingWorker<Rectangle, Void> {
     public Rectangle doInBackground() throws IOException {
         int deltaY = 0, deltaX = 0;
         try {
+            System.out.println(rectangle.x + " " + rectangle.y);
             switch (MenuPanel.currentOption){
                 case dol -> {
-                    deltaY = -5;
-                    deltaX = 0;
+                    if(menu.getWindowSize().height - 80 > rectangle.y + rectangle.height){
+                        deltaY = +1;
+
+                    }
+
                 }
                 case gora -> {
-                    deltaY = +5;
-                    deltaX = 0;
+                    if(10 < rectangle.y - 1) {
+                        deltaY = -1;
+
+                    }
                 }
                 case lewo -> {
-                    deltaX = -5;
-                    deltaY = 0;
+                    if(10 < rectangle.x - 1) {
+                        deltaX = -1;
+
+                    }
                 }
                 case prawo -> {
-                    deltaX = 5;
-                    deltaY = 0;
+                    if(menu.getWindowSize().width - 50 > rectangle.x + rectangle.width) {
+                        deltaX = 1;
+
+                    }
                 }
             }
             rectangle.setBounds(rectangle.x + deltaX, rectangle.y + deltaY, rectangle.width, rectangle.height);
@@ -43,6 +53,9 @@ public class DrawingController extends SwingWorker<Rectangle, Void> {
         } catch (Exception e) {
             System.out.println(e);
         }
+        return rectangle;
+    }
+    public Rectangle GetRect(){
         return rectangle;
     }
 

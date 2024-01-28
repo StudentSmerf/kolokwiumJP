@@ -3,6 +3,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 
+import static java.lang.Math.abs;
+import static java.lang.Math.min;
+
 
 public class DrawingPanel extends JPanel {
     private ArrayList<Rectangle> rectangles;
@@ -27,13 +30,13 @@ public class DrawingPanel extends JPanel {
 
                 }
                 else {
-                    int width = prevX - e.getX();
-                    int height = prevY - e.getY();
-                    currentRectangle.setBounds(e.getX(), e.getY(), width, height);
+                    int width = abs(prevX - e.getX());
+                    int height = abs(prevY - e.getY());
+                    int x = min(prevX , e.getX());
+                    int y = min(prevY , e.getY());
+                    currentRectangle.setBounds(x, y, width, height);
                     repaint();
-                    DrawingController controller = new DrawingController( currentRectangle, menuPanel);
-                    workers.add(controller);
-                    //rectangles.add(currentRectangle);
+                    rectangles.add(currentRectangle);
                     currentRectangle = null;
                 }
 
@@ -48,13 +51,18 @@ public class DrawingPanel extends JPanel {
         ActionListener simulationClock = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                for (DrawingController worker : workers) {
-                    worker.execute();
+                for (int i = 0; i < rectangles.size(); i++) {
+                    DrawingController controller = new DrawingController(rectangles.get(i), menuPanel);
+                    controller.execute();
+                    if(controller.GetRect() != null){
+                        rectangles.set(i, controller.GetRect());
+                    }
+                    repaint();
                 }
             }
         };
 
-        Timer simulationTimer = new Timer(1000, simulationClock);
+        Timer simulationTimer = new Timer(200, simulationClock);
         simulationTimer.setRepeats(true);
         simulationTimer.start();
     }
@@ -67,10 +75,8 @@ public class DrawingPanel extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         if(rectangles != null){
-            for (DrawingController worker : workers) {
-                //Nie zwraca rectangle i nie mam czasu
-                //Rectangle rectangle = worker.execute();
-                //g.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+            for (Rectangle rectangle : rectangles) {
+                g.drawRect(rectangle.x, rectangle.y, rectangle.width, rectangle.height);
             }
         }
 
